@@ -23,6 +23,7 @@ wheels/
 pip-wheel-metadata/
 share/python-wheels/
 *.egg-info/
+sas_venv/
 .installed.cfg
 *.egg
 MANIFEST
@@ -130,6 +131,3 @@ dmypy.json
 
 # Text backup files
 *.bak
-
-# Database
-*.sqlite3
