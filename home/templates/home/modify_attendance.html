@@ -1,0 +1,180 @@
+{% load static %}
+<!doctype html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Modify Attendance</title>
+	<style>
+	canvas {
+		-moz-user-select: none;
+		-webkit-user-select: none;
+		-ms-user-select: none;
+		height: 300px; !important;
+	}
+	</style>
+	<link rel="shortcut icon" href="{% static 'icon/staff.svg' %}">
+	<link rel="stylesheet" href="{% static 'css/home.css' %}">
+	<link rel="stylesheet" href="{% static 'css/modify_attendance.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+
+	<header>
+      <ul id="topbar">
+        <li><a href="#">{{ result }}</a></li>
+        <li><a href="{% url 'home:signout' %}">Sign Out &nbsp;<i class="fa fa-sign-out"></i></a></li>
+      </ul>
+    </header>
+
+	<div class="flexd">
+
+		<div class="sidebar">
+
+			<div id="mySidenav" class="sidenav">
+
+				<ul id="sidebar_options">
+					<li class="btn1"><a href="{% url 'home:dashboard' %}"><i class="fas fa-qrcode"></i>Dashboard</a></li>
+					{% if role == 'professor' %}
+					<li class="btn1"><a href="{% url 'home:take_attendance'  '-' '-' %}"><i class="fas fa-pen"></i>Attendance Entry</a></li>
+					<li class="btn1 active"><a href="{% url 'home:modify_attendance' %}"><i class="fas fa-edit"></i>Modify Attendance</a></li>
+					{% endif %}
+					{% if role == 'facultyAdvisor' %}
+					<li class="btn1"><a href="{% url 'home:take_attendance' '-' '-' %}"><i class="fas fa-pen"></i>Attendance Entry</a></li>
+					<li class="btn1 active"><a href="{% url 'home:modify_attendance' %}"><i class="fas fa-edit"></i>Modify Attendance</a></li>
+					<li class="btn1"><a href="{% url 'home:generate_report' %}"><i class="fas fa-file"></i>Generate Report</a></li>
+					{% endif %}
+					{% if role == 'student' %}
+					<li class="btn1"><a href="{% url 'home:view_attendance' %}"><i class="fas fa-eye"></i>View Attendance</a></li>
+					{% endif %}
+					<li class="btn1"><a href="#"><i class="far fa-question-circle"></i>About</a></li>
+					<li class="btn1"><a href="#"><i class="far fa-envelope"></i>Contact</a></li>
+				</ul>
+
+			</div>
+
+		</div>
+
+		<div class="section">
+            <div class="section_heading">
+				<h1>Modify Attendance</h1>
+			</div>
+			<form action="{% url 'home:modify_attendance' %}" method="POST" style="margin: 25px;">
+				{% csrf_token %}
+				<table width="40%">
+					<tr>
+						<td><label for="cname" style="font-size: 21px;">Class</label></td>
+						<td><input type="text" name="cname" placeholder="Eg 6ITA, 6ITA1, 6ITAT1" style="font-size: 21px;"> <br><br></td>
+					</tr>
+					<tr>
+						<td><label for="subject"  style="font-size: 21px;">Subject</label></td>
+						<td><input type="text" value="{{ subject }}" name="subject" placeholder="Eg WD, DCN"  style="font-size: 21px;"> <br><br></td>
+					</tr>
+					<tr>
+						<td><label for="professor"  style="font-size: 21px;">Professor</label></td>
+						<td><input type="text" value="{{ result }}" name="professor" disabled  style="font-size: 21px;"> <br><br></td>
+					</tr>
+					<tr>
+						<td><label for="date"  style="font-size: 21px;">Date</label></td>
+						<td><input type="date" name="date" placeholder="Year"  style="font-size: 21px; margin-left: 0;"> <br><br></td>
+					</tr>
+					<tr>
+						<td colspan="2"><input type="submit" name="submit_1" value="Go" style="margin: 10px 40% 0;"></td>
+					</tr>
+				</table>
+			</form>
+			{% if student|length > 0 %}
+			<form action="{% url 'home:modify_attendance' %}" method="POST" style="margin: 25px;">
+				{% csrf_token %}
+				<table width="40%">
+					{% for i in student %}
+						<tr>
+							<td><input type="checkbox" name="roll" value="{{ i.roll_number }}"  style="font-size: 21px;"> &nbsp;&nbsp; {{ i.roll_number }} <br><br></td>
+						</tr>
+					{% endfor %}
+					<tr>
+						<td><input type="submit" name="submit_2" value="Post Attendance" style="margin: 10px 40% 0;"></td>
+					</tr>
+				</table>
+			</form>
+			{% endif %}
+		</div>
+	</div>
+
+	<script src="https://kit.fontawesome.com/a076d05399.js"></script>
+	<script src="{% static 'js/Chart.min.js' %}"></script>
+	<script src="{% static 'js/utils.js' %}"></script>
+	<script>
+      var btnContainer = document.getElementById("mySidenav");
+      var btns = btnContainer.getElementsByClassName("btn1");
+      for (var i = 0; i < btns.length; i++) {
+        btns[i].addEventListener("click", function() {
+          var current = document.getElementsByClassName("active");
+          current[0].className = current[0].className.replace(" active", "");
+          this.className += " active";
+        });
+      }
+    </script>
+
+	<script>
+	var color = Chart.helpers.color;
+	var barChartData = {
+		labels: ['Dbms','OS', 'DCN', 'LAW','THOC'],
+		datasets: [{
+			backgroundColor: [
+				'red',
+				'blue',
+				'green',
+				'rgb(75, 192, 192)',
+				'rgb(153, 102, 255)',
+			],
+			borderColor: [
+				'rgba(255,99,132,1)',
+				'rgba(54, 162, 235, 1)',
+				'rgba(255, 206, 86, 1)',
+				'rgba(75, 192, 192, 1)',
+				'rgba(153, 102, 255, 1)',
+			],
+			borderWidth: 1,
+			data: [{% for i in xd %}{{ i }},{% endfor %}]
+		}]
+	};
+
+	window.onload = function() {
+		var ctx = document.getElementById('chart').getContext('2d');
+		window.myBar = new Chart(ctx, {
+			type: 'bar',
+			data: barChartData,
+			options: {
+				responsive: true,
+				maintainAspectRatio: false,
+				legend: {
+					display: false,
+					position: 'top',
+				},
+				title: {
+					display: true,
+					text: 'Atttendance'
+				},
+				scales: {
+					xAxes: [{
+					   display:true
+					}],
+					yAxes: [{
+						ticks: {
+						   beginAtZero:true,
+						   stepSize: 1,
+						   max: {{ max }},
+						}
+					}]
+				}
+
+			}
+		});
+
+	};
+	</script>
+</body>
+
+</html>

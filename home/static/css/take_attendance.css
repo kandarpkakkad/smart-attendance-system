@@ -1,0 +1,27 @@
+form {
+    margin: 25px;
+	font-size: 21px;
+}
+
+form input {
+    margin: 7px 50px 7px 7px;
+	font-size: 21px;
+}
+
+input[type='submit'] {
+    display: block;
+	background: #f3f3f3;
+	padding: 14px 52px;
+	border-radius: 12px;
+	margin-right: 10px;
+	color: #000000;
+	font-weight: 700;
+	font-size: 21px;
+	cursor: pointer;
+	border: 1px solid #2f4f4f;
+}
+
+input[type='submit']:hover {
+    background-color: #2f4f4f;
+	color: #f3f3f3;
+}

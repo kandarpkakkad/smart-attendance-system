@@ -1,0 +1,59 @@
+form {
+    margin: 25px;
+    font-size: 21px;
+}
+
+form input {
+    margin: 7px 7px 7px 7px;
+    font-size: 21px;
+}
+
+form input[type='radio'] {
+    margin-left: 50px;
+}
+
+.lt {
+    margin-left: 60px;
+}
+
+.view  {
+    height: auto;
+    width: 100%;
+    margin: 50px 0;
+}
+
+.view th,td {
+    padding: 8px;
+    width: 11.11%;
+    height: auto;
+}
+
+.view tr:nth-child(even) {
+    background-color: #f3f3f3;
+}
+
+.view tr:nth-child(odd) {
+    background-color: #cccccc;
+}
+
+.view th,td {
+    text-align: center;
+}
+
+input[type='submit'] {
+    display: block;
+	background: #f3f3f3;
+	padding: 14px 52px;
+	border-radius: 12px;
+    margin-right: 10px;
+	color: #000000;
+	font-weight: 700;
+	font-size: 21px;
+	cursor: pointer;
+	border: 1px solid #2f4f4f;
+}
+
+input[type='submit']:hover {
+    background-color: #2f4f4f;
+	color: #f3f3f3;
+}

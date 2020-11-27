@@ -1,0 +1,86 @@
+{% load static %}
+{% load home_tags %}
+<!doctype html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Generate Report</title>
+	<script src="{% static 'js/Chart.min.js' %}"></script>
+	<script src="{% static 'js/utils.js' %}"></script>
+	<link rel="shortcut icon" href="{% static 'icon/staff.svg' %}">
+	<link rel="stylesheet" href="{% static 'css/home.css' %}">
+	<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+	<link rel="stylesheet" href="{% static 'css/take_attendance.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+
+	<header>
+      <ul id="topbar">
+        <li><a href="#">{{ result }}</a></li>
+        <li><a href="{% url 'home:signout' %}">Sign Out &nbsp;<i class="fa fa-sign-out"></i></a></li>
+      </ul>
+    </header>
+
+	<div class="flexd">
+
+		<div class="sidebar">
+
+			<div id="mySidenav" class="sidenav">
+
+				<ul id="sidebar_options">
+					<li class="btn1"><a href="{% url 'home:dashboard' %}"><i class="fas fa-qrcode"></i>Dashboard</a></li>
+					{% if role == 'professor' %}
+					<li class="btn1"><a href="{% url 'home:take_attendance' '-' '-' %}"><i class="fas fa-pen"></i>Attendance Entry</a></li>
+					<li class="btn1"><a href="{% url 'home:modify_attendance' %}"><i class="fas fa-edit"></i>Modify Attendance</a></li>
+					{% endif %}
+					{% if role == 'facultyAdvisor' %}
+					<li class="btn1"><a href="{% url 'home:take_attendance' '-' '-' %}"><i class="fas fa-pen"></i>Attendance Entry</a></li>
+					<li class="btn1"><a href="{% url 'home:modify_attendance' %}"><i class="fas fa-edit"></i>Modify Attendance</a></li>
+					<li class="btn1 active"><a href="{% url 'home:generate_report' %}"><i class="fas fa-file"></i>Generate Report</a></li>
+					{% endif %}
+					{% if role == 'student' %}
+					<li class="btn1"><a href="{% url 'home:view_attendance' %}"><i class="fas fa-eye"></i>View Attendance</a></li>
+					{% endif %}
+					<li class="btn1"><a href="#"><i class="far fa-question-circle"></i>About</a></li>
+					<li class="btn1"><a href="#"><i class="far fa-envelope"></i>Contact</a></li>
+				</ul>
+
+			</div>
+
+		</div>
+
+		<div class="section">
+			<div class="section_heading">
+				<h1>Branch: {{ branch }}</h1>
+				<br /><br />
+				<h3>Select Semester to generate report</h3>
+				{% block content %}
+					<form method="post" action="/home/generate_report/">
+						{% csrf_token %}
+						<div class="inputs">
+							<div class="input">
+								{% if currentMonth <= 12 and currentMonth > 6 %}
+									<input type="radio" name="semester" value="1" checked /> 1<br />
+									<input type="radio" name="semester" value="3" /> 3<br />
+									<input type="radio" name="semester" value="5" /> 5<br />
+									<input type="radio" name="semester" value="7" /> 7<br /><br />
+								{% endif %}
+								{% if currentMonth <= 6 and currentMonth >= 1 %}
+									<input type="radio" name="semester" value="2" checked /> 2<br />
+									<input type="radio" name="semester" value="4" /> 4<br />
+									<input type="radio" name="semester" value="6" /> 6<br /><br />
+								{% endif %}
+							</div>
+						</div>
+						<input type="submit" name="GenerateReport" value="Generate Report">
+					</form>
+				{% endblock %}
+			</div>
+        </div>
+    </div>
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+</body>
+</html>

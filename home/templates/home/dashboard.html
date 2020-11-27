@@ -1,0 +1,302 @@
+{% load static %}
+{% load home_tags %}
+<!doctype html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Dashboard</title>
+	<script src="{% static 'js/Chart.min.js' %}"></script>
+	<script src="{% static 'js/utils.js' %}"></script>
+	<link rel="shortcut icon" href="{% static 'icon/staff.svg' %}">
+	<link rel="stylesheet" href="{% static 'css/home.css' %}">
+	<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+
+	<header>
+      <ul id="topbar">
+        <li><a href="#">{{ result }}</a></li>
+        <li><a href="{% url 'home:signout' %}">Sign Out &nbsp;<i class="fa fa-sign-out"></i></a></li>
+      </ul>
+    </header>
+
+	<div class="flexd">
+
+		<div class="sidebar">
+
+			<div id="mySidenav" class="sidenav">
+
+				<ul id="sidebar_options">
+					<li class="btn1 active"><a href="{% url 'home:dashboard' %}"><i class="fas fa-qrcode"></i>Dashboard</a></li>
+					{% if role == 'professor' %}
+					<li class="btn1"><a href="{% url 'home:take_attendance' '-' '-' %}"><i class="fas fa-pen"></i>Attendance Entry</a></li>
+					<li class="btn1"><a href="{% url 'home:modify_attendance' %}"><i class="fas fa-edit"></i>Modify Attendance</a></li>
+					{% endif %}
+					{% if role == 'facultyAdvisor' %}
+					<li class="btn1"><a href="{% url 'home:take_attendance' '-' '-' %}"><i class="fas fa-pen"></i>Attendance Entry</a></li>
+					<li class="btn1"><a href="{% url 'home:modify_attendance' %}"><i class="fas fa-edit"></i>Modify Attendance</a></li>
+					<li class="btn1"><a href="{% url 'home:generate_report' %}"><i class="fas fa-file"></i>Generate Report</a></li>
+					{% endif %}
+					{% if role == 'student' %}
+					<li class="btn1"><a href="{% url 'home:view_attendance' %}"><i class="fas fa-eye"></i>View Attendance</a></li>
+					{% endif %}
+					<li class="btn1"><a href="#"><i class="far fa-question-circle"></i>About</a></li>
+					<li class="btn1"><a href="#"><i class="far fa-envelope"></i>Contact</a></li>
+				</ul>
+
+			</div>
+
+		</div>
+
+		<div class="section">
+			<div class="section_heading">
+				<h1>Dashboard</h1>
+			</div>
+			{% if role == 'professor' or role == 'facultyAdvisor' %}
+			<table class="timetable">
+
+				{% for i in tt.name %}
+				<tr>
+					<th>{{ i }}</th>
+					{% if i == '' %}
+						{% for j in tt.time %}
+							<th>{{ j }}</th>
+						{% endfor %}
+					{% else %}
+						{% if i == 'mon' %}
+						{% for a,b,c in tt.cols.0|join_list:tt.subject.0|zip:tt.classes.0 %}
+								<td colspan="{{a}}"><a href="{% url 'home:take_attendance' b c%}">{{ b }}<br>{{ c }}</a></td>
+						{% endfor %}
+						{% elif i == 'tue' %}
+						{% for a,b,c in tt.cols.1|join_list:tt.subject.1|zip:tt.classes.1 %}
+								<td colspan="{{a}}"><a href="{% url 'home:take_attendance' b c%}">{{ b }}<br>{{ c }}</a></td>
+						{% endfor %}
+						{% elif i == 'wed' %}
+						{% for a,b,c in tt.cols.2|join_list:tt.subject.2|zip:tt.classes.2 %}
+								<td colspan="{{a}}"><a href="{% url 'home:take_attendance' b c%}">{{ b }}<br>{{ c }}</a></td>
+						{% endfor %}
+						{% elif i == 'thu' %}
+						{% for a,b,c in tt.cols.3|join_list:tt.subject.3|zip:tt.classes.3 %}
+								<td colspan="{{a}}"><a href="{% url 'home:take_attendance' b c%}">{{ b }}<br>{{ c }}</a></td>
+						{% endfor %}
+						{% elif i == 'fri' %}
+						{% for a,b,c in tt.cols.4|join_list:tt.subject.4|zip:tt.classes.4 %}
+								<td colspan="{{a}}"><a href="{% url 'home:take_attendance' b c%}">{{ b }}<br>{{ c }}</a></td>
+						{% endfor %}
+						{% elif i == 'sat' %}
+						{% for a,b,c in tt.cols.5|join_list:tt.subject.5|zip:tt.classes.5 %}
+								<td colspan="{{a}}"><a href="{% url 'home:take_attendance' b c%}">{{ b }}<br>{{ c }}</a></td>
+						{% endfor %}
+						{% endif %}
+					{% endif %}
+				</tr>
+				{% endfor %}
+			</table>
+			{% endif %}
+			{% if role == 'student' %}
+			<div class="container" style="width: 550px; float: left;">
+				<canvas id="chart1"></canvas>
+			</div>
+			<div class="container" style="width: 550px; float: left;">
+				<canvas id="chart2"></canvas>
+			</div>
+			<div class="container" style="width: 550px; float: left;">
+				<canvas id="chart3"></canvas>
+			</div>
+			<div class="container" style="width: 550px; float: left;">
+				<canvas id="chart4"></canvas>
+			</div>
+			{% endif %}
+		</div>
+	</div>
+
+	<div class="footer">
+
+	</div>
+
+	<script>
+      var btnContainer = document.getElementById("mySidenav");
+      var btns = btnContainer.getElementsByClassName("btn1");
+      for (var i = 0; i < btns.length; i++) {
+        btns[i].addEventListener("click", function() {
+          var current = document.getElementsByClassName("active");
+          current[0].className = current[0].className.replace(" active", "");
+          this.className += " active";
+        });
+      }
+    </script>
+		
+	<script>
+	var color = Chart.helpers.color;
+	var barChartData1 = {
+		labels: [{% for i in subsn %}'{{ i }}',{% endfor %}],
+		datasets: [{
+			backgroundColor: [{% for i in clrn %}'{{ i }}',{% endfor %}],
+			borderColor: [{% for i in clrn %}'{{ i }}',{% endfor %}],
+			borderWidth: 1,
+			data: [{% for i in percentagen %}{{ i }},{% endfor %}]
+		}]
+	};
+	var barChartData2 = {
+		labels: [{% for i in subsl %}'{{ i }}',{% endfor %}],
+		datasets: [{
+			backgroundColor: [{% for i in clrl %}'{{ i }}',{% endfor %}],
+			borderColor: [{% for i in clrl %}'{{ i }}',{% endfor %}],
+			borderWidth: 1,
+			data: [{% for i in percentagel %}{{ i }},{% endfor %}]
+		}]
+	};
+	var barChartData3 = {
+		labels: [{% for i in subst %}'{{ i }}',{% endfor %}],
+		datasets: [{
+			backgroundColor: [{% for i in clrt %}'{{ i }}',{% endfor %}],
+			borderColor: [{% for i in clrt %}'{{ i }}',{% endfor %}],
+			borderWidth: 1,
+			data: [{% for i in percentaget %}{{ i }},{% endfor %}]
+		}]
+	};
+	var barChartData4 = {
+		labels: [{% for i in subsa %}'{{ i }}',{% endfor %}],
+		datasets: [{
+			backgroundColor: [{% for i in clra %}'{{ i }}',{% endfor %}],
+			borderColor: [{% for i in clra %}'{{ i }}',{% endfor %}],
+			borderWidth: 1,
+			data: [{% for i in percentagea %}{{ i }},{% endfor %}]
+		}]
+	};
+
+	window.onload = function() {
+		var ctx = document.getElementById('chart1').getContext('2d');
+		window.myBar = new Chart(ctx, {
+			type: 'bar',
+			data: barChartData1,
+			options: {
+				responsive: true,
+				maintainAspectRatio: false,
+				legend: {
+					display: false,
+					position: 'top',
+				},
+				title: {
+					display: true,
+					text: 'Lecture Attendance',
+				},
+				scales: {
+					xAxes: [{
+					   display:true,
+					   barThickness: 30,
+					}],
+					yAxes: [{
+						ticks: {
+						   beginAtZero:true,
+						   stepSize: 20,
+						   max: 100,
+						}
+					}]
+				}
+
+			}
+		});
+		var ctx = document.getElementById('chart2').getContext('2d');
+		window.myBar = new Chart(ctx, {
+			type: 'bar',
+			data: barChartData2,
+			options: {
+				responsive: true,
+				maintainAspectRatio: false,
+				legend: {
+					display: false,
+					position: 'top',
+				},
+				title: {
+					display: true,
+					text: 'Lab Attendance',
+				},
+				scales: {
+					xAxes: [{
+					   display:true,
+					   barThickness: 30,
+					}],
+					yAxes: [{
+						ticks: {
+						   beginAtZero:true,
+						   stepSize: 20,
+						   max: 100,
+						}
+					}]
+				}
+
+			}
+		});
+		var ctx = document.getElementById('chart3').getContext('2d');
+		window.myBar = new Chart(ctx, {
+			type: 'bar',
+			data: barChartData3,
+			options: {
+				responsive: true,
+				maintainAspectRatio: false,
+				legend: {
+					display: false,
+					position: 'top',
+				},
+				title: {
+					display: true,
+					text: 'Tutorial Attendance',
+				},
+				scales: {
+					xAxes: [{
+					   display:true,
+					   barThickness: 30,
+					}],
+					yAxes: [{
+						ticks: {
+						   beginAtZero:true,
+						   stepSize: 20,
+						   max: 100,
+						}
+					}]
+				}
+
+			}
+		});
+		var ctx = document.getElementById('chart4').getContext('2d');
+		window.myBar = new Chart(ctx, {
+			type: 'bar',
+			data: barChartData4,
+			options: {
+				responsive: true,
+				maintainAspectRatio: false,
+				legend: {
+					display: false,
+					position: 'top',
+				},
+				title: {
+					display: true,
+					text: 'Average Attendance',
+				},
+				scales: {
+					xAxes: [{
+					   display:true,
+					   barThickness: 30,
+					}],
+					yAxes: [{
+						ticks: {
+						   beginAtZero:true,
+						   stepSize: 20,
+						   max: 100,
+						}
+					}]
+				}
+
+			}
+		});
+	};
+	</script>
+
+	<script src="https://kit.fontawesome.com/a076d05399.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,135 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto:300,400,400i,500');
+
+*{
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  text-decoration: none;
+}
+
+html {
+    width: 100%;
+}
+
+body {
+    width: 100%;
+    font-family: 'Roboto', sans-serif;
+}
+
+header {
+	padding: 0 2.5%;
+	height: 60px;
+	background: #2f4f4f;
+	font-size: 36px;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+#topbar {
+  float: right;
+  display: flex;
+  min-height: 60px;
+}
+
+#topbar li{
+  padding: 0 25px;
+  float: left;
+}
+
+#topbar li a {
+  font-size: 18px;
+  color: #f3f3f3;
+  background-color: inherit;
+}
+
+#topbar li:hover {
+  background-color: #f3f3f3;
+}
+
+#topbar li:hover a{
+  color: #2f4f4f;
+}
+
+.sidenav {
+  height: 100%;
+  background-color: #222d32;
+}
+
+.sidenav li {
+    width: max-content;
+}
+
+.sidenav a {
+  color: #f3f3f3;
+}
+
+.sidenav li a {
+  display: block;
+  height: 100%;
+  width: 100%;
+  line-height: 50px;
+  font-size: 90%;
+  background-color: #222d32;
+  color: #f3f3f3;
+  padding-left: 30px;
+  padding-right: 20px;
+  box-sizing: border-box;
+}
+
+.sidenav li.active a{
+  background-color: #222d32;
+  border-left: 5px solid #3c8dbc;
+}
+
+.sidenav ul a i{
+  margin-right: 16px;
+}
+
+#mySidenav {
+  width: 100%;
+}
+
+.flexd {
+  display: flex;
+  height: 93.7vh;
+  margin: 0;
+}
+
+.section {
+    width: 100%;
+    margin: 25px;
+}
+
+.timetable th,td {
+    text-align: center;
+}
+
+canvas {
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    height: 300px; !important;
+}
+
+.timetable  {
+    height: 90%;
+    width: 100%;
+    margin: 50px 0;
+}
+
+.timetable th,td {
+    padding: 8px;
+    width: 11.11%;
+    height: auto;
+}
+
+.timetable tr:nth-child(even) {
+    background-color: #f3f3f3;
+}
+
+.timetable tr:nth-child(odd) {
+    background-color: #cccccc;
+}
+
+@media screen and (max-width: 768px) {
+
+}
