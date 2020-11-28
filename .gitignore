@@ -131,3 +131,6 @@ dmypy.json
 
 # Text backup files
 *.bak
+
+# Model
+ssfn/models/R50-0000.params
